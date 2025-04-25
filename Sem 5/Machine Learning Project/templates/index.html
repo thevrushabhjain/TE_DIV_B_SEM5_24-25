@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Breast Cancer Risk Assessment</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #8e44ad;
+            --primary-dark: #732d91;
+            --secondary: #3498db;
+            --light: #f8f9fa;
+            --dark: #343a40;
+            --success: #28a745;
+            --danger: #e74c3c;
+            --warning: #f39c12;
+            --info: #17a2b8;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .hero {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 2rem 0;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiPjxkZWZzPjxwYXR0ZXJuIGlkPSJwYXR0ZXJuIiB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHBhdHRlcm5Vbml0cz0idXNlclNwYWNlT25Vc2UiIHBhdHRlcm5UcmFuc2Zvcm09InJvdGF0ZSg0NSkiPjxyZWN0IHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCIgZmlsbD0icmdiYSgyNTUsMjU1LDI1NSwwLjA1KSIvPjwvcGF0dGVybj48L2RlZnM+PHJlY3Qgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsbD0idXJsKCNwYXR0ZXJuKSIvPjwvc3ZnPg==');
+            opacity: 0.3;
+        }
+        
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        .hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+        
+        .hero p {
+            font-size: 1.1rem;
+            max-width: 700px;
+            margin: 0 auto 2rem;
+            opacity: 0.9;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: -50px auto 50px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .form-header {
+            background: var(--primary);
+            color: white;
+            padding: 1.5rem;
+            text-align: center;
+        }
+        
+        .form-header h2 {
+            font-size: 1.5rem;
+            font-weight: 500;
+        }
+        
+        .form-body {
+            padding: 2rem;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--dark);
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            font-size: 1rem;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+            background-color: #f8f9fa;
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(142, 68, 173, 0.2);
+            background-color: white;
+        }
+        
+        .input-icon {
+            position: absolute;
+            right: 15px;
+            top: 38px;
+            color: #aaa;
+        }
+        
+        .input-hint {
+            font-size: 0.85rem;
+            color: #666;
+            margin-top: 0.25rem;
+            font-style: italic;
+        }
+        
+        .input-error {
+            color: var(--danger);
+            font-size: 0.85rem;
+            margin-top: 0.25rem;
+            display: none;
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            font-size: 1rem;
+            font-weight: 500;
+            text-align: center;
+            white-space: nowrap;
+            vertical-align: middle;
+            cursor: pointer;
+            border: none;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .btn-block {
+            display: block;
+            width: 100%;
+        }
+        
+        .result-container {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            border-radius: 6px;
+            text-align: center;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .result-positive {
+            background-color: rgba(231, 76, 60, 0.1);
+            border-left: 4px solid var(--danger);
+            color: var(--danger);
+        }
+        
+        .result-negative {
+            background-color: rgba(40, 167, 69, 0.1);
+            border-left: 4px solid var(--success);
+            color: var(--success);
+        }
+        
+        .result-text {
+            font-size: 1.2rem;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+        }
+        
+        .result-icon {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+        
+        .info-section {
+            background-color: #f8f9fa;
+            padding: 2rem;
+            margin-top: 2rem;
+            border-radius: 6px;
+        }
+        
+        .info-section h3 {
+            margin-bottom: 1rem;
+            color: var(--primary);
+        }
+        
+        .info-section p {
+            margin-bottom: 1rem;
+        }
+        
+        .tooltip {
+            position: relative;
+            display: inline-block;
+            margin-left: 5px;
+            cursor: pointer;
+        }
+        
+        .tooltip .tooltip-text {
+            visibility: hidden;
+            width: 200px;
+            background-color: var(--dark);
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 8px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            transform: translateX(-50%);
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 0.9rem;
+            font-weight: normal;
+        }
+        
+        .tooltip:hover .tooltip-text {
+            visibility: visible;
+            opacity: 1;
+        }
+        
+        .footer {
+            text-align: center;
+            padding: 2rem 0;
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                margin: 20px auto;
+                border-radius: 0;
+            }
+            
+            .hero h1 {
+                font-size: 2rem;
+            }
+        }
+        
+        /* Loading spinner */
+        .spinner {
+            display: none;
+            width: 40px;
+            height: 40px;
+            margin: 20px auto;
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-radius: 50%;
+            border-top: 4px solid var(--primary);
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Range indicators */
+        .range-indicator {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 0.25rem;
+            font-size: 0.8rem;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Breast Cancer Risk Assessment</h1>
+            <p>Our advanced prediction system helps in early detection of breast cancer by analyzing key diagnostic measurements</p>
+        </div>
+    </section>
+    
+    <div class="container">
+        <div class="form-header">
+            <h2><i class="fas fa-medical-alt" style="margin-right: 10px;"></i>Enter Diagnostic Parameters</h2>
+        </div>
+        
+        <div class="form-body">
+            <form method="POST" action="/predict" id="predictionForm">
+                <div class="form-group">
+                    <label for="mean_radius">Mean Radius (mm)
+                        <span class="tooltip">
+                            <i class="fas fa-info-circle"></i>
+                            <span class="tooltip-text">Average distance from center to points on the perimeter</span>
+                        </span>
+                    </label>
+                    <input type="number" step="0.01" id="mean_radius" name="mean_radius" class="form-control" required 
+                           min="6" max="30" placeholder="Enter value between 6-30"
+                           value="{{ request.form.mean_radius if request.form.mean_radius }}">
+                    <div class="range-indicator">
+                        <span>6 (min)</span>
+                        <span>28.11 (max)</span>
+                    </div>
+                    <div class="input-hint">Typical range: 11-16 mm</div>
+                    <div class="input-error" id="radius-error">Please enter a value between 6 and 30</div>
+                    <i class="fas fa-ruler input-icon"></i>
+                </div>
+                
+                <div class="form-group">
+                    <label for="mean_texture">Mean Texture (standard deviation)
+                        <span class="tooltip">
+                            <i class="fas fa-info-circle"></i>
+                            <span class="tooltip-text">Standard deviation of gray-scale values</span>
+                        </span>
+                    </label>
+                    <input type="number" step="0.01" id="mean_texture" name="mean_texture" class="form-control" required 
+                           min="9" max="40" placeholder="Enter value between 9-40"
+                           value="{{ request.form.mean_texture if request.form.mean_texture }}">
+                    <div class="range-indicator">
+                        <span>9.71 (min)</span>
+                        <span>39.28 (max)</span>
+                    </div>
+                    <div class="input-hint">Typical range: 16-22</div>
+                    <div class="input-error" id="texture-error">Please enter a value between 9 and 40</div>
+                    <i class="fas fa-wave-square input-icon"></i>
+                </div>
+                
+                <div class="form-group">
+                    <label for="mean_perimeter">Mean Perimeter (mm)
+                        <span class="tooltip">
+                            <i class="fas fa-info-circle"></i>
+                            <span class="tooltip-text">Average size of the core tumor</span>
+                        </span>
+                    </label>
+                    <input type="number" step="0.01" id="mean_perimeter" name="mean_perimeter" class="form-control" required 
+                           min="40" max="200" placeholder="Enter value between 40-200"
+                           value="{{ request.form.mean_perimeter if request.form.mean_perimeter }}">
+                    <div class="range-indicator">
+                        <span>43.79 (min)</span>
+                        <span>188.5 (max)</span>
+                    </div>
+                    <div class="input-hint">Typical range: 75-105 mm</div>
+                    <div class="input-error" id="perimeter-error">Please enter a value between 40 and 200</div>
+                    <i class="fas fa-vector-square input-icon"></i>
+                </div>
+                
+                <div class="form-group">
+                    <label for="mean_area">Mean Area (mm²)
+                        <span class="tooltip">
+                            <i class="fas fa-info-circle"></i>
+                            <span class="tooltip-text">Average area of the tumor</span>
+                        </span>
+                    </label>
+                    <input type="number" step="0.01" id="mean_area" name="mean_area" class="form-control" required 
+                           min="140" max="2600" placeholder="Enter value between 140-2600"
+                           value="{{ request.form.mean_area if request.form.mean_area }}">
+                    <div class="range-indicator">
+                        <span>143.5 (min)</span>
+                        <span>2501 (max)</span>
+                    </div>
+                    <div class="input-hint">Typical range: 420-783 mm²</div>
+                    <div class="input-error" id="area-error">Please enter a value between 140 and 2600</div>
+                    <i class="fas fa-border-style input-icon"></i>
+                </div>
+                
+                <div class="form-group">
+                    <label for="mean_smoothness">Mean Smoothness
+                        <span class="tooltip">
+                            <i class="fas fa-info-circle"></i>
+                            <span class="tooltip-text">Local variation in radius lengths</span>
+                        </span>
+                    </label>
+                    <input type="number" step="0.0001" id="mean_smoothness" name="mean_smoothness" class="form-control" required 
+                           min="0.05" max="0.17" placeholder="Enter value between 0.05-0.17"
+                           value="{{ request.form.mean_smoothness if request.form.mean_smoothness }}">
+                    <div class="range-indicator">
+                        <span>0.0526 (min)</span>
+                        <span>0.1634 (max)</span>
+                    </div>
+                    <div class="input-hint">Typical range: 0.086-0.105</div>
+                    <div class="input-error" id="smoothness-error">Please enter a value between 0.05 and 0.17</div>
+                    <i class="fas fa-snowflake input-icon"></i>
+                </div>
+                
+                <button type="submit" class="btn btn-primary btn-block">
+                    <i class="fas fa-search" style="margin-right: 8px;"></i> Analyze Results
+                </button>
+                
+                <div class="spinner" id="loadingSpinner"></div>
+            </form>
+            
+            {% if diagnosed %}
+            <div class="result-container {% if diagnosed == 'Diagnosed with breast-cancer' %}result-positive{% else %}result-negative{% endif %}">
+                <div class="result-icon">
+                    {% if diagnosed == 'Diagnosed with breast-cancer' %}
+                    <i class="fas fa-exclamation-triangle"></i>
+                    {% else %}
+                    <i class="fas fa-check-circle"></i>
+                    {% endif %}
+                </div>
+                <div class="result-text">
+                    <strong>Prediction Result:</strong> {{ diagnosed }}
+                </div>
+                <p>
+                    {% if diagnosed == 'Diagnosed with breast-cancer' %}
+                    This result suggests potential malignancy. Please consult with a healthcare professional for further evaluation.
+                    {% else %}
+                    This result suggests benign characteristics. Regular check-ups are still recommended.
+                    {% endif %}
+                </p>
+            </div>
+            {% endif %}
+            
+            <div class="info-section">
+                <h3><i class="fas fa-lightbulb" style="margin-right: 10px;"></i>About This Assessment</h3>
+                <p>This prediction system uses <strong>your trained logistic regression model</strong> (accuracy: 91.2%) to analyze tumor characteristics.</p>
+                <p>For accurate results, please ensure all measurements are taken by a medical professional using standard diagnostic procedures.</p>
+                <p><strong>Note:</strong> The input ranges shown are based on the dataset statistics. Values outside these ranges may produce less reliable results.</p>
+            </div>
+        </div>
+    </div>
+    
+    <footer class="footer">
+        <p>© 2023 Breast Cancer Prediction System | For medical research purposes only</p>
+    </footer>
+    
+    <script>
+        // Form validation
+        document.getElementById('predictionForm').addEventListener('submit', function(e) {
+            let isValid = true;
+            
+            // Validate Mean Radius
+            const radius = document.getElementById('mean_radius').value;
+            if (radius < 6 || radius > 30) {
+                document.getElementById('radius-error').style.display = 'block';
+                isValid = false;
+            } else {
+                document.getElementById('radius-error').style.display = 'none';
+            }
+            
+            // Validate Mean Texture
+            const texture = document.getElementById('mean_texture').value;
+            if (texture < 9 || texture > 40) {
+                document.getElementById('texture-error').style.display = 'block';
+                isValid = false;
+            } else {
+                document.getElementById('texture-error').style.display = 'none';
+            }
+            
+            // Validate Mean Perimeter
+            const perimeter = document.getElementById('mean_perimeter').value;
+            if (perimeter < 40 || perimeter > 200) {
+                document.getElementById('perimeter-error').style.display = 'block';
+                isValid = false;
+            } else {
+                document.getElementById('perimeter-error').style.display = 'none';
+            }
+            
+            // Validate Mean Area
+            const area = document.getElementById('mean_area').value;
+            if (area < 140 || area > 2600) {
+                document.getElementById('area-error').style.display = 'block';
+                isValid = false;
+            } else {
+                document.getElementById('area-error').style.display = 'none';
+            }
+            
+            // Validate Mean Smoothness
+            const smoothness = document.getElementById('mean_smoothness').value;
+            if (smoothness < 0.05 || smoothness > 0.17) {
+                document.getElementById('smoothness-error').style.display = 'block';
+                isValid = false;
+            } else {
+                document.getElementById('smoothness-error').style.display = 'none';
+            }
+            
+            if (!isValid) {
+                e.preventDefault();
+                return false;
+            }
+            
+            document.getElementById('loadingSpinner').style.display = 'block';
+        });
+        
+        // Input validation on change
+        document.querySelectorAll('.form-control').forEach(input => {
+            input.addEventListener('input', function() {
+                if (this.value < 0) {
+                    this.value = 0;
+                }
+            });
+        });
+        
+        // Animate form elements on load
+        document.addEventListener('DOMContentLoaded', function() {
+            const formGroups = document.querySelectorAll('.form-group');
+            formGroups.forEach((group, index) => {
+                group.style.opacity = '0';
+                group.style.transform = 'translateY(20px)';
+                group.style.transition = `all 0.5s ease ${index * 0.1}s`;
+                
+                setTimeout(() => {
+                    group.style.opacity = '1';
+                    group.style.transform = 'translateY(0)';
+                }, 100);
+            });
+        });
+    </script>
+</body>
+</html>
